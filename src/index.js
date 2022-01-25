@@ -20,7 +20,7 @@ io.on('connection', (socket) => {
 
     socket.on('join', (options, callback) => {
         const { error, user } = addUser({ id: socket.id, ...options })
-        const admin = 'Minho - The Sucker Punch Professional'
+        const admin = 'WhatsUpp Bot'
 
         if (error) {
             return callback(error)
@@ -29,9 +29,9 @@ io.on('connection', (socket) => {
         socket.join(user.room)
 
         socket.emit('message', generateMessage(admin, 
-        `Whats up ${user.username}! I humbly welcome you and I hope you find tranquility with fellow warriors in ${user.room}. Foul language will be filtered. Face off instead.
+        `Whats up ${user.username}! I humbly welcome you and I encourage constant chatter with fellow users in ${user.room}. Please keep in mind that rude chatters will be filtered. Enjoy :) 
         `))
-        socket.broadcast.to(user.room).emit('message', generateMessage(admin, `${user.username} has just landed. Smack him down!`))
+        socket.broadcast.to(user.room).emit('message', generateMessage(admin, `${user.username} has just landed!`))
         io.to(user.room).emit('roomData', {
             room: user.room,
             users: getUsersInRoom(user.room)
@@ -65,7 +65,7 @@ io.on('connection', (socket) => {
         const admin = 'Minho - The Sucker Punch Professional'
         
         if (user) {
-            io.to(user.room).emit('message', generateMessage(admin, `${user.username} has left!`))
+            io.to(user.room).emit('message', generateMessage(admin, `${user.username} just left!`))
             io.to(user.room).emit('roomData', {
                 room: user.room,
                 users: getUsersInRoom(user.room)
