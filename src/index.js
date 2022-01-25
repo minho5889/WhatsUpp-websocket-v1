@@ -43,13 +43,15 @@ io.on('connection', (socket) => {
     socket.on('sendMessage', (message, callback) => {
         const user = getUser(socket.id)
         const filter = new Filter()
+        const filtered = "some bad words"
 
         if (filter.isProfane(message)) {
-            return callback('Say no to profanity!')
+            io.to(user.room).emit('message', generateMessage(user.username, filtered))
+            callback()
+        } else {
+            io.to(user.room).emit('message', generateMessage(user.username, message))
+            callback()
         }
-
-        io.to(user.room).emit('message', generateMessage(user.username, message))
-        callback()
     })
 
     socket.on('sendLocation', (coords, callback) => {
@@ -62,7 +64,7 @@ io.on('connection', (socket) => {
         const user = removeUser(socket.id)
 
         if (user) {
-            io.to(user.room).emit('message', generateMessage(admin, `${user.username} has defeated and left... well done!`))
+            io.to(user.room).emit('message', generateMessage(admin, `${user.username} has left!`))
             io.to(user.room).emit('roomData', {
                 room: user.room,
                 users: getUsersInRoom(user.room)
