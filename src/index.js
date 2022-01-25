@@ -20,6 +20,7 @@ io.on('connection', (socket) => {
 
     socket.on('join', (options, callback) => {
         const { error, user } = addUser({ id: socket.id, ...options })
+        const admin = 'Minho - The Sucker Punch Professional'
 
         if (error) {
             return callback(error)
@@ -27,8 +28,10 @@ io.on('connection', (socket) => {
 
         socket.join(user.room)
 
-        socket.emit('message', generateMessage('Admin', 'Welcome!'))
-        socket.broadcast.to(user.room).emit('message', generateMessage('Admin', `${user.username} has joined!`))
+        socket.emit('message', generateMessage(admin, 
+        `Whats up ${user.username}! I humbly welcome you and I hope you find tranquility with fellow warriors in ${user.room}. Foul language will be filtered. Face off instead.
+        `))
+        socket.broadcast.to(user.room).emit('message', generateMessage(admin, `${user.username} has just landed. Smack him down!`))
         io.to(user.room).emit('roomData', {
             room: user.room,
             users: getUsersInRoom(user.room)
@@ -42,7 +45,7 @@ io.on('connection', (socket) => {
         const filter = new Filter()
 
         if (filter.isProfane(message)) {
-            return callback('Profanity is not allowed!')
+            return callback('Say no to profanity!')
         }
 
         io.to(user.room).emit('message', generateMessage(user.username, message))
@@ -59,7 +62,7 @@ io.on('connection', (socket) => {
         const user = removeUser(socket.id)
 
         if (user) {
-            io.to(user.room).emit('message', generateMessage('Admin', `${user.username} has left!`))
+            io.to(user.room).emit('message', generateMessage(admin, `${user.username} has defeated and left... well done!`))
             io.to(user.room).emit('roomData', {
                 room: user.room,
                 users: getUsersInRoom(user.room)
